@@ -1,0 +1,8 @@
+{
+  "name": "purescript-catenable",
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "pulp": "^4.3.0"
+  }
+}

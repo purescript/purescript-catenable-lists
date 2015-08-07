@@ -11,14 +11,13 @@ module Data.CList
 import Prelude (Show, (++), show)
 
 import Data.Either (Either(..))
-import Data.Lazy (Lazy(), defer, force)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 
 import qualified Data.DList as D
 import qualified Data.List as L
 
-data CList a = CNil | CCons a (D.DList (Lazy (CList a)))
+data CList a = CNil | CCons a (D.DList (CList a))
 
 empty :: forall a. CList a
 empty = CNil
@@ -46,15 +45,15 @@ uncons (CCons a dlist) = Just (Tuple a (if D.null dlist
 
 link :: forall a. CList a -> CList a -> CList a
 link CNil clist = clist
-link (CCons a dlist) clist = CCons a (D.snoc dlist (defer (\_ -> clist)))
+link (CCons a dlist) clist = CCons a (D.snoc dlist clist)
 
-linkAll :: forall a. D.DList (Lazy (CList a)) -> CList a
+linkAll :: forall a. D.DList (CList a) -> CList a
 linkAll dlist = foldr link CNil dlist
 
-foldr :: forall a. (CList a -> CList a -> CList a) -> CList a -> D.DList (Lazy (CList a)) -> CList a
+foldr :: forall a. (CList a -> CList a -> CList a) -> CList a -> D.DList (CList a) -> CList a
 foldr k = foldr' (\a -> Left (\b -> k a b))
 
-foldr' :: forall a. (CList a -> Either (CList a -> CList a) (CList a)) -> CList a -> D.DList (Lazy (CList a)) -> CList a
+foldr' :: forall a. (CList a -> Either (CList a -> CList a) (CList a)) -> CList a -> D.DList (CList a) -> CList a
 foldr' k b dlist = go dlist L.Nil
   where
   unroll :: CList a -> L.List (CList a -> CList a) -> CList a
@@ -64,11 +63,11 @@ foldr' k b dlist = go dlist L.Nil
   foldl _ b L.Nil = b
   foldl k b (L.Cons a as) = foldl k (k b a) as
 
-  go :: D.DList (Lazy (CList a)) -> L.List (CList a -> CList a) -> CList a
+  go :: D.DList (CList a) -> L.List (CList a -> CList a) -> CList a
   go xs ys = case D.uncons xs of
                   Nothing -> unroll b ys
                   Just (Tuple a rest) ->
-                    case k (force a) of
+                    case k a of
                          Right b' -> unroll b' ys
                          Left j -> go rest (L.Cons j ys)
 

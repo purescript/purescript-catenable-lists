@@ -11,7 +11,6 @@ module Data.CList
 import Prelude (Show, (++), show)
 
 import Data.Either (Either(..))
-import Data.Foldable (foldl)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 
@@ -59,6 +58,10 @@ foldr' k b dlist = go dlist L.Nil
   where
   unroll :: CList a -> L.List (CList a -> CList a) -> CList a
   unroll = foldl (\x i -> i x)
+
+  foldl :: forall a b. (b -> a -> b) -> b -> L.List a -> b
+  foldl _ b L.Nil = b
+  foldl k b (L.Cons a as) = foldl k (k b a) as
 
   go :: D.DList (CList a) -> L.List (CList a -> CList a) -> CList a
   go xs ys = case D.uncons xs of

@@ -8,16 +8,15 @@ module Data.CList
   , uncons
   ) where
 
-import Prelude (Monad, Show, (++), (>>=), pure, show)
+import Prelude (Show, (++), show)
 
-import Control.Monad.Rec.Class (MonadRec)
-import Control.Safely (Operator, safely)
-
-import Data.Identity (Identity(..), runIdentity)
+import Data.Either (Either(..))
+import Data.Foldable (foldl)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 
 import qualified Data.DList as D
+import qualified Data.List as L
 
 data CList a = CNil | CCons a (D.DList (CList a))
 
@@ -50,23 +49,24 @@ link CNil clist = clist
 link (CCons a dlist) clist = CCons a (D.snoc dlist clist)
 
 linkAll :: forall a. D.DList (CList a) -> CList a
-linkAll dlist = runIdentity (foldrS (\a b -> Identity (link a b)) CNil dlist)
+linkAll dlist = foldr link CNil dlist
 
-foldrM :: forall m a. (Monad m) => (CList a -> CList a -> m (CList a)) -> CList a -> D.DList (CList a) -> m (CList a)
-foldrM k b dlist = case D.uncons dlist of
-                        Nothing -> pure CNil
-                        Just (Tuple a as) -> (foldrM k b as) >>= k a
+foldr :: forall a. (CList a -> CList a -> CList a) -> CList a -> D.DList (CList a) -> CList a
+foldr k = foldr' (\a -> Left (\b -> k a b))
 
-newtype Foldr m = Foldr (forall a.(CList a -> CList a -> m (CList a)) -> CList a -> D.DList (CList a) -> m (CList a))
+foldr' :: forall a. (CList a -> Either (CList a -> CList a) (CList a)) -> CList a -> D.DList (CList a) -> CList a
+foldr' k b dlist = go dlist L.Nil
+  where
+  unroll :: CList a -> L.List (CList a -> CList a) -> CList a
+  unroll = foldl (\x i -> i x)
 
-instance operatorFoldr :: Operator Foldr where
-  mapO to from (Foldr r) = Foldr \k b dlist -> to (r (\i j -> from (k i j)) b dlist)
-
-runFoldr :: forall m a. Foldr m -> (CList a -> CList a -> m (CList a)) -> CList a -> D.DList (CList a) -> m (CList a)
-runFoldr (Foldr r) = r
-
-foldrS :: forall m a. (MonadRec m) => (CList a -> CList a -> m (CList a)) -> CList a -> D.DList (CList a) -> m (CList a)
-foldrS = runFoldr (safely (Foldr foldrM))
+  go :: D.DList (CList a) -> L.List (CList a -> CList a) -> CList a
+  go xs ys = case D.uncons xs of
+                  Nothing -> unroll b ys
+                  Just (Tuple a rest) ->
+                    case k a of
+                         Right b' -> unroll b' ys
+                         Left j -> go rest (L.Cons j ys)
 
 instance showCList :: (Show a) => Show (CList a) where
   show CNil = "CNil"

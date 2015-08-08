@@ -7,6 +7,8 @@ import Control.Monad.Eff.Console (log)
 import Test.Data.CatList
 import Test.Data.CatQueue
 
+import Test.Benchmark
+
 main = do
   log "CatQueue"
   testCatQueue
@@ -15,3 +17,7 @@ main = do
 
   log "CatList"
   testCatList
+
+  --log ""
+  --log "Running benchmarks..."
+  --runBenchmarks

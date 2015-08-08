@@ -1,6 +1,10 @@
 ## Module Data.CatQueue
 
-This module defines a strict queue.
+This module defines a strict queue implemented using a pair of
+lists. The operations require `O(1)` amortized time. However,
+any `uncons` may require `O(n)` time.
+
+See [Simple and Efficient Purely Functional Queues and Dequeues](http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf) (Okasaki 1995)
 
 #### `CatQueue`
 
@@ -8,6 +12,8 @@ This module defines a strict queue.
 data CatQueue a
   = CatQueue (List a) (List a)
 ```
+
+A strict queue representated using a pair of lists.
 
 ##### Instances
 ``` purescript
@@ -20,17 +26,19 @@ instance showCatQueue :: (Show a) => Show (CatQueue a)
 empty :: forall a. CatQueue a
 ```
 
+Create an empty queue.
+
+Running time: `O(1)`
+
 #### `null`
 
 ``` purescript
 null :: forall a. CatQueue a -> Boolean
 ```
 
-#### `cons`
+Test whether a queue is empty.
 
-``` purescript
-cons :: forall a. a -> CatQueue a -> CatQueue a
-```
+Running time: `O(1)`
 
 #### `snoc`
 
@@ -38,10 +46,19 @@ cons :: forall a. a -> CatQueue a -> CatQueue a
 snoc :: forall a. CatQueue a -> a -> CatQueue a
 ```
 
+Append an element to the end of the queue, creating a new queue.
+
+Running time: `O(1)`
+
 #### `uncons`
 
 ``` purescript
 uncons :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
 ```
+
+Decompose a queue into a `Tuple` of the first element and the rest of the queue.
+
+Running time: `O(1)`
+However, this operation may require `O(n)`
 
 

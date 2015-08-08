@@ -15,6 +15,7 @@
   "devDependencies": {
     "purescript-assert": "~0.1.1",
     "purescript-quickcheck": "~0.7.0",
-    "purescript-console": "~0.1.0"
+    "purescript-console": "~0.1.0",
+    "purescript-benchotron": "~2.1.0"
   }
 }

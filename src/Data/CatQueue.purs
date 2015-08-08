@@ -1,6 +1,9 @@
--- | This module defines a strict queue implemented using a pair of
--- | lists. The operations require `O(1)` amortized time. However,
--- | any `uncons` may require `O(n)` time.
+-- | This module defines a strict queue.
+-- |
+-- | The queue implementation is based on a pair of lists where all
+-- | operations require `O(1)` amortized time.
+-- |
+-- | However, any single `uncons` operation may run in `O(n)` time.
 -- |
 -- | See [Simple and Efficient Purely Functional Queues and Dequeues](http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf) (Okasaki 1995)
 module Data.CatQueue
@@ -42,7 +45,8 @@ snoc (CatQueue l r) a = CatQueue l (Cons a r)
 -- | Decompose a queue into a `Tuple` of the first element and the rest of the queue.
 -- |
 -- | Running time: `O(1)`
--- | However, this operation may require `O(n)`
+-- |
+-- | Note that any single operation may run in `O(n)`.
 uncons :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
 uncons (CatQueue Nil Nil) = Nothing
 uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)

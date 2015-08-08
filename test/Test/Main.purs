@@ -18,6 +18,7 @@ main = do
   log "CatList"
   testCatList
 
-  --log ""
+  log ""
+
   --log "Running benchmarks..."
   --runBenchmarks

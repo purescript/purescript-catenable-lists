@@ -1,5 +1,5 @@
 {
-  "name": "purescript-catenable",
+  "name": "purescript-catenable-lists",
   "private": true,
   "license": "MIT",
   "devDependencies": {

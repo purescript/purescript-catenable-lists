@@ -1,17 +1,17 @@
-module Test.Data.DList (testDList) where
+module Test.Data.CatQueue (testCatQueue) where
 
 import Prelude
 
 import Control.Monad.Eff.Console (log)
 
-import Data.DList
+import Data.CatQueue
 import Data.Maybe (Maybe(..), isNothing)
 import Data.Maybe.Unsafe (fromJust)
 import Data.Tuple (fst, snd)
 
 import Test.Assert (assert)
 
-testDList = do
+testCatQueue = do
   log "null should be true for the empty list"
   assert $ null empty
 

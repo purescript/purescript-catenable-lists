@@ -1,1 +1,1 @@
-# purescript-catenable
+# purescript-catenable-lists

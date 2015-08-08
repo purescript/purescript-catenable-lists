@@ -4,12 +4,14 @@ import Prelude
 
 import Control.Monad.Eff.Console (log)
 
-import Test.Data.CList
-import Test.Data.DList
+import Test.Data.CatList
+import Test.Data.CatQueue
 
 main = do
-  log "DList -----------------------------------------"
-  testDList
+  log "CatQueue"
+  testCatQueue
 
-  log "CList -----------------------------------------"
-  testCList
+  log ""
+
+  log "CatList"
+  testCatList

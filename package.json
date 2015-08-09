@@ -2,7 +2,15 @@
   "name": "purescript-catenable-lists",
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "build": "./node_modules/.bin/pulp build",
+    "build:watch": "./node_modules/.bin/pulp -w build",
+    "test": "./node_modules/.bin/pulp test",
+    "test:watch": "./node_modules/.bin/pulp -w test",
+    "docs": "./node_modules/.bin/pulp docs"
+  },
   "devDependencies": {
+    "benchmark": "^1.0.0",
     "pulp": "^4.3.0"
   }
 }

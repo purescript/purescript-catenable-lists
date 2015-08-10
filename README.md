@@ -33,3 +33,5 @@ bower install --save purescript-catenable-lists
 ![snoc-uncons](benchmarks/snoc-uncons.png)
 
 ![cons-uncons-n](benchmarks/cons-uncons-n.png)
+
+![snoc-uncons-n](benchmarks/snoc-uncons-n.png)

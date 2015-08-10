@@ -91,6 +91,35 @@ appendBenchmark = mkBenchmark
                ]
   }
 
+snocUnconsBenchmark :: forall eff. Benchmark eff
+snocUnconsBenchmark = mkBenchmark
+  { slug: "snoc-uncons"
+  , title: "Add elements to the end of the lists and then remove them from the front"
+  , sizes: (1..10) <#> (*100)
+  , sizeInterpretation: "Number of elements to be added and removed"
+  , inputsPerSize: 1
+  , gen: randomArray
+  , functions: [ benchFn "CatQueue" (foldl (\b a -> fromMaybe Q.empty (snd <$> Q.uncons (Q.snoc b a))) Q.empty)
+               , benchFn "CatList" (foldl (\b a -> fromMaybe C.empty (snd <$> C.uncons (C.snoc b a))) C.empty)
+               , benchFn "List" (foldl (\b a -> fromMaybe L.Nil ((\x -> x.tail) <$> L.uncons (L.snoc b a))) L.Nil)
+               , benchFn "Sequence" (foldl (\b a -> fromMaybe S.empty (snd <$> S.uncons (S.snoc b a))) S.empty)
+               ]
+  }
+
+consUnconsNBenchmark :: forall eff. Benchmark eff
+consUnconsNBenchmark = mkBenchmark
+  { slug: "cons-uncons-n"
+  , title: "Add N elements to the front then remove N elements from the front of the list"
+  , sizes: (1..10) <#> (*100)
+  , sizeInterpretation: "Number of elements to be added and removed"
+  , inputsPerSize: 1
+  , gen: randomArray
+  , functions: [ benchFn "CatList" \as -> foldl (\b _ -> fromMaybe C.empty (snd <$> C.uncons b)) (foldr C.cons C.empty as) as
+               , benchFn "List" \as -> foldl (\b _ -> fromMaybe L.Nil ((\x -> x.tail) <$> L.uncons b)) (foldr L.(:) L.Nil as) as
+               , benchFn "Sequence" \as -> foldl (\b _ -> fromMaybe S.empty (snd <$> S.uncons b)) (foldr S.cons S.empty as) as
+               ]
+  }
+
 randomCatQueue :: forall eff. Int -> Eff (BenchEffects eff) (Q.CatQueue Number)
 randomCatQueue n = (foldl Q.snoc Q.empty) <$> (randomArray n)
 
@@ -111,4 +140,6 @@ runBenchmarks = runSuite [ consBenchmark
                          , snocBenchmark
                          , unconsBenchmark
                          , appendBenchmark
+                         , snocUnconsBenchmark
+                         , consUnconsNBenchmark
                          ]

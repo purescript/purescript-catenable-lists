@@ -120,6 +120,21 @@ consUnconsNBenchmark = mkBenchmark
                ]
   }
 
+snocUnconsNBenchmark :: forall eff. Benchmark eff
+snocUnconsNBenchmark = mkBenchmark
+  { slug: "snoc-uncons-n"
+  , title: "Add N elements to the end then remove N elements from the front of the list"
+  , sizes: (1..10) <#> (*100)
+  , sizeInterpretation: "Number of elements to be added and removed"
+  , inputsPerSize: 1
+  , gen: randomArray
+  , functions: [ benchFn "CatQueue" \as -> foldl (\b _ -> fromMaybe Q.empty (snd <$> Q.uncons b)) (foldl Q.snoc Q.empty as) as
+               , benchFn "CatList" \as -> foldl (\b _ -> fromMaybe C.empty (snd <$> C.uncons b)) (foldl C.snoc C.empty as) as
+               , benchFn "List" \as -> foldl (\b _ -> fromMaybe L.Nil ((\x -> x.tail) <$> L.uncons b)) (foldl L.snoc L.Nil as) as
+               , benchFn "Sequence" \as -> foldl (\b _ -> fromMaybe S.empty (snd <$> S.uncons b)) (foldl S.snoc S.empty as) as
+               ]
+  }
+
 randomCatQueue :: forall eff. Int -> Eff (BenchEffects eff) (Q.CatQueue Number)
 randomCatQueue n = (foldl Q.snoc Q.empty) <$> (randomArray n)
 
@@ -142,4 +157,5 @@ runBenchmarks = runSuite [ consBenchmark
                          , appendBenchmark
                          , snocUnconsBenchmark
                          , consUnconsNBenchmark
+                         , snocUnconsNBenchmark
                          ]

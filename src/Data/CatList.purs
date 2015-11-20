@@ -100,7 +100,7 @@ foldr k b q = go q L.Nil
                   Nothing -> foldl (\x i -> i x) b ys
                   Just (Tuple a rest) -> go rest (L.Cons (k a) ys)
 
-  foldl :: forall a b. (b -> a -> b) -> b -> L.List a -> b
+  foldl :: forall b c. (c -> b -> c) -> c -> L.List b -> c
   foldl _ b L.Nil = b
   foldl k b (L.Cons a as) = foldl k (k b a) as
 

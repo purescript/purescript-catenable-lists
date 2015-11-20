@@ -9,14 +9,14 @@
     "tests"
   ],
   "dependencies": {
-    "purescript-lists": "~0.7.0",
-    "purescript-tuples": "~0.4.0"
+    "purescript-lists": "^0.7.7",
+    "purescript-tuples": "^0.4.0"
   },
   "devDependencies": {
-    "purescript-assert": "~0.1.1",
-    "purescript-quickcheck": "~0.7.0",
-    "purescript-console": "~0.1.0",
-    "purescript-benchotron": "~2.1.0",
-    "purescript-sequences": "~0.4.1"
+    "purescript-assert": "^0.1.1",
+    "purescript-benchotron": "^3.0.3",
+    "purescript-console": "^0.1.0",
+    "purescript-quickcheck": "^0.12.1",
+    "purescript-sequences": "^0.4.2"
   }
 }

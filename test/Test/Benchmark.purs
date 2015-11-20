@@ -11,6 +11,7 @@ import Data.Tuple
 import Benchotron.Core
 import Benchotron.UI.Console
 
+import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
 
 import qualified Data.Array as A
@@ -21,7 +22,7 @@ import qualified Data.Sequence as S
 
 (..) = A.(..)
 
-consBenchmark :: forall eff. Benchmark eff
+consBenchmark :: Benchmark
 consBenchmark = mkBenchmark
   { slug: "cons"
   , title: "Add elements to the beginning of the lists"
@@ -35,7 +36,7 @@ consBenchmark = mkBenchmark
                ]
   }
 
-snocBenchmark :: forall eff. Benchmark eff
+snocBenchmark :: Benchmark
 snocBenchmark = mkBenchmark
   { slug: "snoc"
   , title: "Add elements to the end of the lists"
@@ -50,7 +51,7 @@ snocBenchmark = mkBenchmark
                ]
   }
 
-unconsBenchmark :: forall eff. Benchmark eff
+unconsBenchmark :: Benchmark
 unconsBenchmark = mkBenchmark
   { slug: "uncons"
   , title: "Remove elements from the front of the list"
@@ -72,7 +73,7 @@ unconsBenchmark = mkBenchmark
                ]
   }
 
-appendBenchmark :: forall eff. Benchmark eff
+appendBenchmark :: Benchmark
 appendBenchmark = mkBenchmark
   { slug: "append"
   , title: "Add all elements from one list to the end of another list"
@@ -91,7 +92,7 @@ appendBenchmark = mkBenchmark
                ]
   }
 
-snocUnconsBenchmark :: forall eff. Benchmark eff
+snocUnconsBenchmark :: Benchmark
 snocUnconsBenchmark = mkBenchmark
   { slug: "snoc-uncons"
   , title: "Add elements to the end of the lists and then remove them from the front"
@@ -106,7 +107,7 @@ snocUnconsBenchmark = mkBenchmark
                ]
   }
 
-consUnconsNBenchmark :: forall eff. Benchmark eff
+consUnconsNBenchmark :: Benchmark
 consUnconsNBenchmark = mkBenchmark
   { slug: "cons-uncons-n"
   , title: "Add N elements to the front then remove N elements from the front of the list"
@@ -120,7 +121,7 @@ consUnconsNBenchmark = mkBenchmark
                ]
   }
 
-snocUnconsNBenchmark :: forall eff. Benchmark eff
+snocUnconsNBenchmark :: Benchmark
 snocUnconsNBenchmark = mkBenchmark
   { slug: "snoc-uncons-n"
   , title: "Add N elements to the end then remove N elements from the front of the list"
@@ -135,19 +136,20 @@ snocUnconsNBenchmark = mkBenchmark
                ]
   }
 
-randomCatQueue :: forall eff. Int -> Eff (BenchEffects eff) (Q.CatQueue Number)
+randomCatQueue :: forall eff. Int -> Gen (Q.CatQueue Number)
 randomCatQueue n = (foldl Q.snoc Q.empty) <$> (randomArray n)
 
-randomCatList :: forall eff. Int -> Eff (BenchEffects eff) (C.CatList Number)
+randomCatList :: forall eff. Int -> Gen (C.CatList Number)
 randomCatList n = (foldl C.snoc C.empty) <$> (randomArray n)
 
-randomList :: forall eff. Int -> Eff (BenchEffects eff) (L.List Number)
+randomList :: forall eff. Int -> Gen (L.List Number)
 randomList n = (foldl L.snoc L.Nil) <$> (randomArray n)
 
-randomSequence :: forall eff. Int -> Eff (BenchEffects eff) (S.Seq Number)
+randomSequence :: forall eff. Int -> Gen (S.Seq Number)
 randomSequence n = (foldl S.snoc S.empty) <$> (randomArray n)
 
-foreign import randomArray :: forall eff. Int -> Eff (BenchEffects eff) (Array Number)
+randomArray :: forall eff. Int -> Gen (Array Number)
+randomArray = flip vectorOf arbitrary
 
 foreign import whileUncons :: forall f a uncons. (uncons -> Boolean) -> (uncons -> f a) -> (f a -> uncons) -> f a -> Unit
 

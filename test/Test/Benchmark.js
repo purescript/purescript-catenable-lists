@@ -2,16 +2,6 @@
 
 // module Test.Benchmark
 
-function randomArray(size) {
-  return function(){
-    var arr = [];
-    for (var i = 0; i < size; i++) {
-      arr.push(Math.random());
-    }
-    return arr;
-  };
-}
-
 function whileUncons(predicate) {
   return function(tail){
     return function(uncons){
@@ -29,7 +19,5 @@ function whileUncons(predicate) {
     };
   };
 }
-
-exports.randomArray = randomArray;
 
 exports.whileUncons = whileUncons;

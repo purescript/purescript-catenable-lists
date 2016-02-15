@@ -16,14 +16,14 @@ module Data.CatList
   , uncons
   ) where
 
-import Prelude (Semigroup, Show, (++), show)
+import Prelude (class Semigroup, class Show, (++), show)
 
 import Data.Maybe (Maybe(..))
-import Data.Monoid (Monoid)
+import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
 
-import qualified Data.CatQueue as Q
-import qualified Data.List as L
+import Data.CatQueue as Q
+import Data.List as L
 
 -- | A strict catenable list.
 -- |

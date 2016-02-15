@@ -14,7 +14,7 @@ module Data.CatQueue
   , uncons
   ) where
 
-import Prelude (Show, (++), show)
+import Prelude (class Show, (++), show)
 
 import Data.List (List(..), reverse)
 import Data.Maybe (Maybe(..))

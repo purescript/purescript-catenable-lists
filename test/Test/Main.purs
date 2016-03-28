@@ -2,13 +2,14 @@ module Test.Main where
 
 import Prelude
 
-import Control.Monad.Eff.Console (log)
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Console (CONSOLE, log)
 
-import Test.Data.CatList
-import Test.Data.CatQueue
+import Test.Assert (ASSERT)
+import Test.Data.CatList (testCatList)
+import Test.Data.CatQueue (testCatQueue)
 
-import Test.Benchmark
-
+main :: Eff (console :: CONSOLE, assert :: ASSERT) Unit
 main = do
   log "CatQueue"
   testCatQueue
@@ -17,8 +18,3 @@ main = do
 
   log "CatList"
   testCatList
-
-  log ""
-
-  --log "Running benchmarks..."
-  --runBenchmarks

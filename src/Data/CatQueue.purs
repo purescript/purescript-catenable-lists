@@ -14,10 +14,10 @@ module Data.CatQueue
   , uncons
   ) where
 
-import Prelude (Show, (++), show)
-
 import Data.List (List(..), reverse)
 import Data.Maybe (Maybe(..))
+import Data.Semigroup ((<>))
+import Data.Show (class Show, show)
 import Data.Tuple (Tuple(..))
 
 -- | A strict queue representated using a pair of lists.
@@ -52,5 +52,5 @@ uncons (CatQueue Nil Nil) = Nothing
 uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)
 uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
 
-instance showCatQueue :: (Show a) => Show (CatQueue a) where
-  show (CatQueue l r) = "CatQueue (" ++ show l ++ ") (" ++ show r ++ ")"
+instance showCatQueue :: Show a => Show (CatQueue a) where
+  show (CatQueue l r) = "(CatQueue " <> show l <> " " <> show r <> ")"

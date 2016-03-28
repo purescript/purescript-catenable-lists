@@ -16,14 +16,13 @@ module Data.CatList
   , uncons
   ) where
 
-import Prelude (Semigroup, Show, (++), show)
-
+import Data.CatQueue as Q
+import Data.List as L
 import Data.Maybe (Maybe(..))
-import Data.Monoid (Monoid)
+import Data.Monoid (class Monoid)
+import Data.Semigroup (class Semigroup, (<>))
+import Data.Show (class Show, show)
 import Data.Tuple (Tuple(..))
-
-import qualified Data.CatQueue as Q
-import qualified Data.List as L
 
 -- | A strict catenable list.
 -- |
@@ -110,6 +109,6 @@ instance semigroupCatList :: Semigroup (CatList a) where
 instance monoidCatList :: Monoid (CatList a) where
   mempty = CatNil
 
-instance showCatList :: (Show a) => Show (CatList a) where
+instance showCatList :: Show a => Show (CatList a) where
   show CatNil = "CatNil"
-  show (CatCons a as) = "CatList (" ++ show a ++ ") (" ++ show as ++ ")"
+  show (CatCons a as) = "(CatList " <> show a <> " " <> show as <> ")"

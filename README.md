@@ -20,8 +20,7 @@ bower install --save purescript-catenable-lists
 
 ## Documentation
 
-* [Data.CatList](docs/Data/CatList.md)
-* [Data.CatQueue](docs/Data/CatQueue.md)
+Module documentation is [published on Pursuit](http://pursuit.purescript.org/packages/purescript-catenable-lists).
 
 ## Benchmarks
 

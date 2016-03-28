@@ -1,17 +1,20 @@
 module Test.Data.CatList (testCatList) where
 
-import Prelude hiding (append)
+import Prelude (Unit, (==), ($), bind)
 
-import Control.Monad.Eff.Console (log)
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Console (CONSOLE, log)
 
 import Data.CatList
-import Data.Maybe (Maybe(..), isNothing)
-import Data.Maybe.Unsafe (fromJust)
+import Data.Maybe (fromJust)
 import Data.Tuple (fst, snd)
 
-import Test.Assert (assert)
+import Partial.Unsafe (unsafePartial)
 
-testCatList = do
+import Test.Assert (ASSERT, assert)
+
+testCatList :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
+testCatList = unsafePartial do
   log "null should be true for the empty list"
   assert $ null empty
 

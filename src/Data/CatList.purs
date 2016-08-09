@@ -14,15 +14,32 @@ module Data.CatList
   , cons
   , snoc
   , uncons
+  , fromFoldable
   ) where
 
 import Data.CatQueue as Q
+import Data.Foldable as Foldable
 import Data.List as L
+import Control.Alt (class Alt)
+import Control.Alternative (class Alternative)
+import Control.Applicative (pure, class Applicative)
+import Control.Apply ((<*>), class Apply)
+import Control.Bind (class Bind)
+import Control.Monad (ap, class Monad)
+import Control.MonadPlus (class MonadPlus)
+import Control.MonadZero (class MonadZero)
+import Control.Plus (class Plus)
+import Data.Foldable (class Foldable)
+import Data.Function (flip)
+import Data.Functor ((<$>), class Functor)
 import Data.Maybe (Maybe(..))
-import Data.Monoid (class Monoid)
+import Data.Monoid (mempty, class Monoid)
+import Data.NaturalTransformation (type (~>))
 import Data.Semigroup (class Semigroup, (<>))
 import Data.Show (class Show, show)
+import Data.Traversable (sequence, traverse, class Traversable)
 import Data.Tuple (Tuple(..))
+import Data.Unfoldable (class Unfoldable)
 
 -- | A strict catenable list.
 -- |
@@ -61,6 +78,12 @@ append as bs = link as bs
 -- | Running time: `O(1)`
 cons :: forall a. a -> CatList a -> CatList a
 cons a cat = append (CatCons a Q.empty) cat
+
+-- | Create a catenable list with a single item.
+-- |
+-- | Running time: `O(1)`
+singleton :: forall a. a -> CatList a
+singleton a = cons a CatNil
 
 -- | Append an element to the end of the catenable list, creating a new
 -- | catenable list.
@@ -103,6 +126,24 @@ foldr k b q = go q L.Nil
   foldl _ c L.Nil = c
   foldl k c (L.Cons b as) = foldl k (k c b) as
 
+-- | Convert any `Foldable` into a `CatList`.
+-- |
+-- | Running time: `O(n)`
+fromFoldable :: forall f. Foldable f => f ~> CatList
+fromFoldable f = Foldable.foldMap singleton f
+
+map :: forall a b. (a -> b) -> CatList a -> CatList b
+map _ CatNil = CatNil
+map f (CatCons a q) =
+  let d = if Q.null q then CatNil else (foldr link CatNil q)
+  in f a `cons` map f d
+
+foldMap :: forall a m. Monoid m => (a -> m) -> CatList a -> m
+foldMap f CatNil = mempty
+foldMap f (CatCons a q) =
+  let d = if Q.null q then CatNil else (foldr link CatNil q)
+  in f a <> foldMap f d
+
 instance semigroupCatList :: Semigroup (CatList a) where
   append = append
 
@@ -112,3 +153,51 @@ instance monoidCatList :: Monoid (CatList a) where
 instance showCatList :: Show a => Show (CatList a) where
   show CatNil = "CatNil"
   show (CatCons a as) = "(CatList " <> show a <> " " <> show as <> ")"
+
+instance foldableCatList :: Foldable CatList where
+  foldMap f l = foldMap f l
+  foldl f s l = Foldable.foldlDefault f s l
+  foldr f s l = Foldable.foldrDefault f s l
+
+instance unfoldableCatList :: Unfoldable CatList where
+  unfoldr f b = go b CatNil
+    where
+      go source memo = case f source of
+        Nothing -> memo
+        Just (Tuple one rest) -> go rest (snoc memo one)
+
+instance traversableCatList :: Traversable CatList where
+  traverse _ CatNil = pure CatNil
+  traverse f (CatCons a q) =
+    let d = if Q.null q then CatNil else (foldr link CatNil q)
+    in cons <$> f a <*> traverse f d
+  sequence CatNil = pure CatNil
+  sequence (CatCons a q) =
+    let d = if Q.null q then CatNil else (foldr link CatNil q)
+    in cons <$> a <*> sequence d
+
+instance functorCatList :: Functor CatList where
+  map = map
+
+instance applyCatList :: Apply CatList where
+  apply = ap
+
+instance applicativeCatList :: Applicative CatList where
+  pure = singleton
+
+instance bindCatList :: Bind CatList where
+  bind = flip foldMap
+
+instance monadCatList :: Monad CatList
+
+instance altCatList :: Alt CatList where
+  alt = append
+
+instance plusCatList :: Plus CatList where
+  empty = empty
+
+instance alternativeCatList :: Alternative CatList
+
+instance monadZeroCatList :: MonadZero CatList
+
+instance monadPlusCatList :: MonadPlus CatList

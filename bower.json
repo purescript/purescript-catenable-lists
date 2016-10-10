@@ -17,14 +17,14 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-lists": "^1.0.0",
-    "purescript-tuples": "^1.0.0",
-    "purescript-foldable-traversable": "^1.0.0",
-    "purescript-unfoldable": "^1.0.0",
-    "purescript-control": "^1.0.0"
+    "purescript-lists": "^2.0.0",
+    "purescript-tuples": "^3.0.0",
+    "purescript-foldable-traversable": "^2.0.0",
+    "purescript-unfoldable": "^2.0.0",
+    "purescript-control": "^2.0.0"
   },
   "devDependencies": {
-    "purescript-assert": "^1.0.0",
-    "purescript-console": "^1.0.0"
+    "purescript-assert": "^2.0.0",
+    "purescript-console": "^2.0.0"
   }
 }

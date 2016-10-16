@@ -17,7 +17,7 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-lists": "^2.0.0",
+    "purescript-lists": "^3.0.0",
     "purescript-tuples": "^3.0.0",
     "purescript-foldable-traversable": "^2.0.0",
     "purescript-unfoldable": "^2.0.0",

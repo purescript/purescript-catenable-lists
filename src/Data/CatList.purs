@@ -124,7 +124,7 @@ foldr k b q = go q L.Nil
 
   foldl :: forall b c. (c -> b -> c) -> c -> L.List b -> c
   foldl _ c L.Nil = c
-  foldl k c (L.Cons b as) = foldl k (k c b) as
+  foldl k' c (L.Cons b' as) = foldl k' (k' c b') as
 
 -- | Convert any `Foldable` into a `CatList`.
 -- |

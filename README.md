@@ -1,8 +1,7 @@
 # purescript-catenable-lists
 
-[![Latest release](http://img.shields.io/bower/v/purescript-catenable-lists.svg)](https://github.com/purescript/purescript-catenable-lists/releases)
-[![Build Status](https://travis-ci.org/purescript/purescript-catenable-lists.svg?branch=master)](https://travis-ci.org/purescript/purescript-catenable-lists)
-[![Dependency Status](https://www.versioneye.com/user/projects/5620cf4f36d0ab00210009b6/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5620cf4f36d0ab00210009b6)
+[![Latest release](http://img.shields.io/github/version/purescript/purescript-catenable-lists.svg)](https://github.com/purescript/purescript-catenable-lists/releases)
+[![Build status](https://travis-ci.org/purescript/purescript-catenable-lists.svg?branch=master)](https://travis-ci.org/purescript/purescript-catenable-lists)
 
 Strict catenable list implementation for PureScript.
 

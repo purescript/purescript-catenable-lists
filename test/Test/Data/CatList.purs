@@ -1,7 +1,7 @@
 module Test.Data.CatList (testCatList) where
 
 import Data.CatList
-import Control.Bind (bind)
+import Control.Bind (discard)
 import Control.Category (id)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)

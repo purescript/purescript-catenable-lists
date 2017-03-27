@@ -1,6 +1,6 @@
 module Test.Data.CatQueue (testCatQueue) where
 
-import Prelude (Unit, (==), ($), bind)
+import Prelude (Unit, (==), ($), discard)
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)

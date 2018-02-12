@@ -10,6 +10,7 @@ module Data.CatQueue
   ( CatQueue(..)
   , empty
   , null
+  , singleton
   , snoc
   , uncons
   ) where
@@ -35,6 +36,12 @@ empty = CatQueue Nil Nil
 null :: forall a. CatQueue a -> Boolean
 null (CatQueue Nil Nil) = true
 null _ = false
+
+-- | Create a queue containing a single element.
+-- |
+-- | Running time: `O(1)`
+singleton :: forall a. a -> CatQueue a
+singleton = snoc empty
 
 -- | Append an element to the end of the queue, creating a new queue.
 -- |

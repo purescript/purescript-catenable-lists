@@ -1,6 +1,7 @@
 module Test.Data.CatList (testCatList) where
 
 import Data.CatList
+
 import Control.Bind (discard)
 import Control.Category (id)
 import Control.Monad.Eff (Eff)
@@ -10,17 +11,22 @@ import Data.Eq ((==))
 import Data.Foldable (foldMap)
 import Data.Function (($))
 import Data.Functor ((<$>))
-import Data.Maybe (fromJust)
+import Data.Maybe (Maybe(..), fromJust)
 import Data.Tuple (fst, snd)
 import Data.Unfoldable (replicate)
 import Data.Unit (Unit)
 import Partial.Unsafe (unsafePartial)
+import Prelude ((<<<))
 import Test.Assert (ASSERT, assert)
 
 testCatList :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
 testCatList = unsafePartial do
   log "null should be true for the empty list"
   assert $ null empty
+
+  log "singleton should create a queue with one element"
+  assert $ (fst <$> uncons (singleton 1)) == Just 1
+  assert $ (null <<< snd <$> uncons (singleton 1)) == Just true
 
   log "cons should add an item to the beginning of the list"
   assert $ fst (fromJust (uncons (20 `cons` (10 `cons` empty)))) == 20

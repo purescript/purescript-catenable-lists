@@ -1,22 +1,23 @@
 module Test.Data.CatQueue (testCatQueue) where
 
-import Prelude (Unit, (==), ($), discard)
+import Data.CatQueue
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-
-import Data.CatQueue
-import Data.Maybe (fromJust, isNothing)
+import Data.Maybe (Maybe(..), fromJust, isNothing)
 import Data.Tuple (fst, snd)
-
 import Partial.Unsafe (unsafePartial)
-
+import Prelude (Unit, (==), ($), (<$>), (<<<), discard)
 import Test.Assert (ASSERT, assert)
 
 testCatQueue :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
 testCatQueue = unsafePartial do
   log "null should be true for the empty list"
   assert $ null empty
+
+  log "singleton should create a queue with one element"
+  assert $ (fst <$> uncons (singleton 1)) == Just 1
+  assert $ (null <<< snd <$> uncons (singleton 1)) == Just true
 
   log "snoc should add an item to the end of the list"
   assert $ fst (fromJust (uncons ((empty `snoc` 10) `snoc` 20))) == 10

@@ -10,6 +10,7 @@ module Data.CatList
   ( CatList(..)
   , empty
   , null
+  , singleton
   , append
   , cons
   , snoc

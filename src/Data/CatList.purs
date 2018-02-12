@@ -11,6 +11,7 @@ module Data.CatList
   , empty
   , null
   , singleton
+  , length
   , append
   , cons
   , snoc
@@ -63,6 +64,12 @@ empty = CatNil
 null :: forall a. CatList a -> Boolean
 null CatNil = true
 null _ = false
+
+-- | Number of elements in queue.
+-- |
+-- | Running time: `O(n)` in length of queue.
+length :: forall a. CatList a -> Int
+length = Foldable.length
 
 -- | Append all elements of a catenable list to the end of another
 -- | catenable list, create a new catenable list.

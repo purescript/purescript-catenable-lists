@@ -11,14 +11,16 @@ module Data.CatQueue
   , empty
   , null
   , singleton
+  , length
   , snoc
   , uncons
   ) where
 
+import Prelude
+
 import Data.List (List(..), reverse)
+import Data.List as L
 import Data.Maybe (Maybe(..))
-import Data.Semigroup ((<>))
-import Data.Show (class Show, show)
 import Data.Tuple (Tuple(..))
 
 -- | A strict queue representated using a pair of lists.
@@ -42,6 +44,12 @@ null _ = false
 -- | Running time: `O(1)`
 singleton :: forall a. a -> CatQueue a
 singleton = snoc empty
+
+-- | Number of elements in queue.
+-- |
+-- | Running time: `O(n)` in length of queue.
+length :: forall a. CatQueue a -> Int
+length (CatQueue l r) = L.length l + L.length r
 
 -- | Append an element to the end of the queue, creating a new queue.
 -- |

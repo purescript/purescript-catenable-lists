@@ -11,15 +11,24 @@ module Data.CatQueue
   , empty
   , null
   , singleton
+  , append
   , snoc
   , uncons
   ) where
 
+import Prelude hiding (append)
+
+import Control.Alt (class Alt)
+import Control.Alternative (class Alternative)
+import Control.MonadPlus (class MonadPlus)
+import Control.MonadZero (class MonadZero)
+import Control.Plus (class Plus)
+import Data.Foldable (class Foldable, foldMap, foldMapDefaultL, foldl, foldrDefault)
 import Data.List (List(..), reverse)
 import Data.Maybe (Maybe(..))
-import Data.Semigroup ((<>))
-import Data.Show (class Show, show)
+import Data.Monoid (class Monoid)
 import Data.Tuple (Tuple(..))
+import Data.Unfoldable (class Unfoldable)
 
 -- | A strict queue representated using a pair of lists.
 data CatQueue a = CatQueue (List a) (List a)
@@ -36,6 +45,13 @@ empty = CatQueue Nil Nil
 null :: forall a. CatQueue a -> Boolean
 null (CatQueue Nil Nil) = true
 null _ = false
+
+-- | Append all elements of a queue to the end of another
+-- | queue, creating a new queue.
+-- |
+-- | Running time: `O(n) in the length of the second queue`
+append :: forall a. CatQueue a -> CatQueue a -> CatQueue a
+append cq = foldl snoc cq
 
 -- | Create a queue containing a single element.
 -- |
@@ -59,5 +75,53 @@ uncons (CatQueue Nil Nil) = Nothing
 uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)
 uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
 
+instance semigroupCatQueue :: Semigroup (CatQueue a) where
+  append = append
+
+instance monoidCatQueue :: Monoid (CatQueue a) where
+  mempty = empty
+
 instance showCatQueue :: Show a => Show (CatQueue a) where
   show (CatQueue l r) = "(CatQueue " <> show l <> " " <> show r <> ")"
+
+instance foldableCatQueue :: Foldable CatQueue where
+  foldMap f q = foldMapDefaultL f q
+  foldr f s q = foldrDefault f s q
+  foldl f = go
+    where
+    go acc q = case uncons q of
+       Just (Tuple x xs) -> go (f acc x) xs
+       Nothing -> acc
+
+instance unfoldableCatQueue :: Unfoldable CatQueue where
+  unfoldr f b = go b empty
+    where
+      go source memo = case f source of
+        Nothing -> memo
+        Just (Tuple one rest) -> go rest (snoc memo one)
+
+instance functorCatQueue :: Functor CatQueue where
+  map f (CatQueue l r) = CatQueue (map f l) (map f r)
+
+instance applyCatQueue :: Apply CatQueue where
+  apply = ap
+
+instance applicativeCatQueue :: Applicative CatQueue where
+  pure = singleton
+
+instance bindCatQueue :: Bind CatQueue where
+  bind = flip foldMap
+
+instance monadCatQueue :: Monad CatQueue
+
+instance altCatQueue :: Alt CatQueue where
+  alt = append
+
+instance plusCatQueue :: Plus CatQueue where
+  empty = empty
+
+instance alternativeCatQueue :: Alternative CatQueue
+
+instance monadZeroCatQueue :: MonadZero CatQueue
+
+instance monadPlusCatQueue :: MonadPlus CatQueue

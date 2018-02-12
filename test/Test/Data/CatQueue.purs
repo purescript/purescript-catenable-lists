@@ -1,14 +1,16 @@
 module Test.Data.CatQueue (testCatQueue) where
 
-import Data.CatQueue
 import Prelude
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-import Data.Foldable (foldMap)
+import Data.CatQueue (CatQueue, empty, fromFoldable, null, singleton, snoc, uncons)
+import Data.Foldable (foldMap, foldl)
 import Data.Maybe (Maybe(..), fromJust, isNothing)
+import Data.Monoid.Additive (Additive(..))
+import Data.Newtype (ala)
 import Data.Tuple (fst, snd)
-import Data.Unfoldable (replicate)
+import Data.Unfoldable (range, replicate)
 import Partial.Unsafe (unsafePartial)
 import Test.Assert (ASSERT, assert)
 
@@ -40,6 +42,14 @@ testCatQueue = unsafePartial do
   log "foldMap over a queue of monoids should produce the concatenation of the monoids"
   let queue2 = ((empty `snoc` "a") `snoc` "b") `snoc` "c"
   assert $ foldMap id queue2 == "abc"
+
+  log "foldMap is stack safe"
+  let longList :: CatQueue Int
+      longList = range 0 10000
+  assert $ ala Additive foldMap longList == 50005000
+ 
+  log "foldl is stack-safe"
+  assert $ foldl (+) 0 longList == 50005000
 
   log "fromFoldable should convert an array into a CatList with the same values"
   let queue3 = fromFoldable ["a", "b", "c"]

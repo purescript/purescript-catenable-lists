@@ -12,22 +12,22 @@ import Test.Assert (ASSERT, assert)
 
 testCatQueue :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
 testCatQueue = unsafePartial do
-  log "null should be true for the empty list"
+  log "null should be true for the empty queue"
   assert $ null empty
 
   log "singleton should create a queue with one element"
   assert $ (fst <$> uncons (singleton 1)) == Just 1
   assert $ (null <<< snd <$> uncons (singleton 1)) == Just true
 
-  log "snoc should add an item to the end of the list"
+  log "snoc should add an item to the end of the queue"
   assert $ fst (fromJust (uncons ((empty `snoc` 10) `snoc` 20))) == 10
   assert $ fst (fromJust (uncons (snd (fromJust (uncons ((empty `snoc` 10) `snoc` 20)))))) == 20
 
-  log "uncons of the empty list should be Nothing"
+  log "uncons of the empty queue should be Nothing"
   assert $ isNothing (uncons empty)
 
-  log "uncons of a list with left and right lists should remove items properly"
-  let list1 = ((empty `snoc` 10) `snoc` 20) `snoc` 30
-  assert $ fst (fromJust (uncons list1)) == 10
-  assert $ fst (fromJust (uncons (snd (fromJust (uncons list1))))) == 20
-  assert $ fst (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons list1)))))))) == 30
+  log "uncons of a queue with left and right lists should remove items properly"
+  let queue1 = ((empty `snoc` 10) `snoc` 20) `snoc` 30
+  assert $ fst (fromJust (uncons queue1)) == 10
+  assert $ fst (fromJust (uncons (snd (fromJust (uncons queue1))))) == 20
+  assert $ fst (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons queue1)))))))) == 30

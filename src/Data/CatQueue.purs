@@ -14,6 +14,7 @@ module Data.CatQueue
   , append
   , snoc
   , uncons
+  , fromFoldable
   ) where
 
 import Prelude hiding (append)
@@ -74,6 +75,12 @@ uncons :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
 uncons (CatQueue Nil Nil) = Nothing
 uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)
 uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
+
+-- | Convert any `Foldable` into a `CatQueue`.
+-- |
+-- | Running time: `O(n)`
+fromFoldable :: forall f a. Foldable f => f a -> CatQueue a
+fromFoldable f = foldMap singleton f
 
 instance semigroupCatQueue :: Semigroup (CatQueue a) where
   append = append

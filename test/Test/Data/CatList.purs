@@ -5,15 +5,16 @@ import Data.CatList
 import Control.Bind (discard)
 import Control.Category (id)
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
+import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Data.CommutativeRing ((+))
 import Data.Eq ((==))
 import Data.Foldable (foldMap)
 import Data.Function (($))
 import Data.Functor ((<$>))
 import Data.Maybe (Maybe(..), fromJust)
+import Data.Monoid.Additive (Additive(..))
 import Data.Tuple (fst, snd)
-import Data.Unfoldable (replicate)
+import Data.Unfoldable (range, replicate)
 import Data.Unit (Unit)
 import Partial.Unsafe (unsafePartial)
 import Prelude ((<<<))
@@ -49,6 +50,14 @@ testCatList = unsafePartial do
   log "foldMap over a list of monoids should produce the concatenation of the monoids"
   let list2 = (("a" `cons` empty) `snoc` "b") `snoc` "c"
   assert $ foldMap id list2 == "abc"
+
+  log "foldMap is stack safe"
+  let longList :: CatList Int
+      longList = range 0 10000
+  logShow $ foldMap Additive longList
+
+  log "foldl is stack-safe"
+  logShow $ foldl (+) 0 longList
 
   log "fromFoldable should convert an array into a CatList with the same values"
   let list3 = fromFoldable ["a", "b", "c"]

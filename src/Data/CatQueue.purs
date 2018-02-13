@@ -21,6 +21,7 @@ import Prelude hiding (append)
 
 import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
+import Control.Apply (lift2)
 import Control.MonadPlus (class MonadPlus)
 import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
@@ -28,6 +29,7 @@ import Data.Foldable (class Foldable, foldMap, foldMapDefaultL, foldl, foldrDefa
 import Data.List (List(..), reverse)
 import Data.Maybe (Maybe(..))
 import Data.Monoid (class Monoid)
+import Data.Traversable (class Traversable, sequenceDefault)
 import Data.Tuple (Tuple(..))
 import Data.Unfoldable (class Unfoldable)
 
@@ -82,6 +84,19 @@ uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
 fromFoldable :: forall f a. Foldable f => f a -> CatQueue a
 fromFoldable f = foldMap singleton f
 
+cqEq :: forall a. Eq a => CatQueue a -> CatQueue a -> Boolean
+cqEq = go
+  where
+    elemEq = eq :: (a -> a -> Boolean)
+    go xs ys = case uncons xs, uncons ys of
+      Just (Tuple x xs'), Just (Tuple y ys')
+        | x `elemEq` y -> go xs' ys'
+      Nothing, Nothing -> true
+      _      , _       -> false
+
+instance eqCatQueue :: Eq a => Eq (CatQueue a) where
+  eq = cqEq
+
 instance semigroupCatQueue :: Semigroup (CatQueue a) where
   append = append
 
@@ -106,6 +121,12 @@ instance unfoldableCatQueue :: Unfoldable CatQueue where
       go source memo = case f source of
         Nothing -> memo
         Just (Tuple one rest) -> go rest (snoc memo one)
+
+instance traversableCatQueue :: Traversable CatQueue where
+  traverse f =
+    map (foldl snoc empty)
+    <<< foldl (\acc -> lift2 snoc acc <<< f) (pure empty)
+  sequence = sequenceDefault
 
 instance functorCatQueue :: Functor CatQueue where
   map f (CatQueue l r) = CatQueue (map f l) (map f r)

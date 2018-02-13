@@ -18,9 +18,6 @@ module Data.CatList
   , fromFoldable
   ) where
 
-import Data.CatQueue as Q
-import Data.Foldable as Foldable
-import Data.List as L
 import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
 import Control.Applicative (pure, class Applicative)
@@ -30,9 +27,12 @@ import Control.Monad (ap, class Monad)
 import Control.MonadPlus (class MonadPlus)
 import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
-import Data.Foldable (class Foldable)
+import Data.CatQueue as Q
+import Data.Foldable (class Foldable, foldMapDefaultL)
+import Data.Foldable as Foldable
 import Data.Function (flip)
 import Data.Functor ((<$>), class Functor)
+import Data.List as L
 import Data.Maybe (Maybe(..))
 import Data.Monoid (mempty, class Monoid)
 import Data.NaturalTransformation (type (~>))
@@ -156,9 +156,13 @@ instance showCatList :: Show a => Show (CatList a) where
   show (CatCons a as) = "(CatList " <> show a <> " " <> show as <> ")"
 
 instance foldableCatList :: Foldable CatList where
-  foldMap f l = foldMap f l
-  foldl f s l = Foldable.foldlDefault f s l
+  foldMap = foldMapDefaultL
   foldr f s l = Foldable.foldrDefault f s l
+  foldl f = go
+    where
+    go acc q = case uncons q of
+       Just (Tuple x xs) -> go (f acc x) xs
+       Nothing -> acc
 
 instance unfoldableCatList :: Unfoldable CatList where
   unfoldr f b = go b CatNil

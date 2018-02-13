@@ -131,8 +131,8 @@ instance showCatQueue :: Show a => Show (CatQueue a) where
   show (CatQueue l r) = "(CatQueue " <> show l <> " " <> show r <> ")"
 
 instance foldableCatQueue :: Foldable CatQueue where
-  foldMap f q = foldMapDefaultL f q
-  foldr f s q = foldrDefault f s q
+  foldMap = foldMapDefaultL
+  foldr f = foldrDefault f
   foldl f = go
     where
     go acc q = case uncons q of

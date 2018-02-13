@@ -94,8 +94,24 @@ cqEq = go
       Nothing, Nothing -> true
       _      , _       -> false
 
+cqCompare :: forall a. Ord a => CatQueue a -> CatQueue a -> Ordering
+cqCompare = go
+  where
+    elemCompare = compare :: (a -> a -> Ordering)
+    go xs ys = case uncons xs, uncons ys of
+      Just (Tuple x xs'), Just (Tuple y ys') ->
+        case elemCompare x y of
+             EQ       -> go xs' ys'
+             ordering -> ordering
+      Just _,   Nothing -> GT
+      Nothing,  Just _  -> LT
+      Nothing,  Nothing -> EQ
+
 instance eqCatQueue :: Eq a => Eq (CatQueue a) where
   eq = cqEq
+
+instance ordCatQueue :: Ord a => Ord (CatQueue a) where
+  compare = cqCompare
 
 instance semigroupCatQueue :: Semigroup (CatQueue a) where
   append = append

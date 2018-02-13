@@ -8,13 +8,14 @@
 -- | See [Simple and Efficient Purely Functional Queues and Dequeues](http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf) (Okasaki 1995)
 module Data.CatQueue
   ( CatQueue(..)
+  , fromFoldable
   , empty
   , null
   , singleton
   , append
   , snoc
   , uncons
-  , fromFoldable
+  , reverse
   ) where
 
 import Prelude hiding (append)
@@ -26,7 +27,8 @@ import Control.MonadPlus (class MonadPlus)
 import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
 import Data.Foldable (class Foldable, foldMap, foldMapDefaultL, foldl, foldrDefault)
-import Data.List (List(..), reverse)
+import Data.List (List(..))
+import Data.List as L
 import Data.Maybe (Maybe(..))
 import Data.Monoid (class Monoid)
 import Data.Traversable (class Traversable, sequenceDefault)
@@ -68,6 +70,12 @@ singleton = snoc empty
 snoc :: forall a. CatQueue a -> a -> CatQueue a
 snoc (CatQueue l r) a = CatQueue l (Cons a r)
 
+-- | Reverse a queue.
+-- |
+-- | Running time: `O(1)`.
+reverse :: forall a. CatQueue a -> CatQueue a
+reverse (CatQueue l r) = CatQueue r l
+
 -- | Decompose a queue into a `Tuple` of the first element and the rest of the queue.
 -- |
 -- | Running time: `O(1)`
@@ -75,7 +83,7 @@ snoc (CatQueue l r) a = CatQueue l (Cons a r)
 -- | Note that any single operation may run in `O(n)`.
 uncons :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
 uncons (CatQueue Nil Nil) = Nothing
-uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)
+uncons (CatQueue Nil r) = uncons (CatQueue (L.reverse r) Nil)
 uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
 
 -- | Convert any `Foldable` into a `CatQueue`.

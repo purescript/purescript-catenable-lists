@@ -3,8 +3,8 @@ module Test.Data.CatQueue (testCatQueue) where
 import Prelude
 
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
-import Data.CatQueue (CatQueue, empty, fromFoldable, null, singleton, snoc, uncons)
+import Control.Monad.Eff.Console (CONSOLE, log, logShow)
+import Data.CatQueue (CatQueue, empty, fromFoldable, null, reverse, singleton, snoc, uncons)
 import Data.Foldable (foldMap, foldl)
 import Data.Maybe (Maybe(..), fromJust, isNothing)
 import Data.Monoid.Additive (Additive(..))
@@ -36,6 +36,10 @@ testCatQueue = unsafePartial do
   assert $ fst (fromJust (uncons list1)) == 10
   assert $ fst (fromJust (uncons (snd (fromJust (uncons list1))))) == 20
   assert $ fst (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons list1)))))))) == 30
+
+  log "reverse should reverse a list"
+  logShow $ reverse list1
+  assert $ reverse list1 == (((empty `snoc` 30) `snoc` 20) `snoc` 10)
 
   log "fromFoldable should convert an array into a CatList with the same values"
   let queue3 = fromFoldable ["a", "b", "c"]

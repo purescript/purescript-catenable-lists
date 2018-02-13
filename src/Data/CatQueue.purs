@@ -1,4 +1,4 @@
--- | This module defines a strict queue.
+-- | This module defines a strict double-ended queue.
 -- |
 -- | The queue implementation is based on a pair of lists where all
 -- | operations require `O(1)` amortized time.
@@ -12,8 +12,10 @@ module Data.CatQueue
   , null
   , singleton
   , length
+  , cons
   , snoc
   , uncons
+  , unsnoc
   , fromFoldable
   ) where
 
@@ -34,7 +36,7 @@ import Data.Traversable (class Traversable, sequenceDefault)
 import Data.Tuple (Tuple(..))
 import Data.Unfoldable (class Unfoldable)
 
--- | A strict queue representated using a pair of lists.
+-- | A strict double-ended queue (dequeue) representated using a pair of lists.
 data CatQueue a = CatQueue (List a) (List a)
 
 -- | Create an empty queue.
@@ -62,6 +64,12 @@ singleton = snoc empty
 length :: forall a. CatQueue a -> Int
 length (CatQueue l r) = L.length l + L.length r
 
+-- | Append an element to the beginning of the queue, creating a new queue.
+-- |
+-- | Running time: `O(1)`
+cons :: forall a. a -> CatQueue a -> CatQueue a
+cons a (CatQueue l r) = CatQueue (Cons a l) r
+
 -- | Append an element to the end of the queue, creating a new queue.
 -- |
 -- | Running time: `O(1)`
@@ -77,6 +85,16 @@ uncons :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
 uncons (CatQueue Nil Nil) = Nothing
 uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)
 uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
+
+-- | Decompose a queue into a `Tuple` of the last element and the rest of the queue.
+-- |
+-- | Running time: `O(1)`
+-- |
+-- | Note that any single operation may run in `O(n)`.
+unsnoc :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
+unsnoc (CatQueue l (Cons a as)) = Just (Tuple a (CatQueue l as))
+unsnoc (CatQueue Nil Nil) = Nothing
+unsnoc (CatQueue l Nil) = unsnoc (CatQueue Nil (reverse l))
 
 -- | Convert any `Foldable` into a `CatQueue`.
 -- |

@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-import Data.CatQueue (CatQueue, empty, fromFoldable, null, length, singleton, snoc, uncons)
+import Data.CatQueue (CatQueue, empty, fromFoldable, null, length, singleton, cons, snoc, uncons, unsnoc)
 import Data.Foldable (foldMap, foldl)
 import Data.Maybe (Maybe(..), fromJust, isNothing)
 import Data.Monoid.Additive (Additive(..))
@@ -29,6 +29,10 @@ testCatQueue = unsafePartial do
   assert $ length (snoc empty 1) == 1
   assert $ length (snoc (snoc empty 1) 2) == 2
 
+  log "cons should add an item to the beginning of the queue"
+  assert $ fst (fromJust (uncons (20 `cons` (10 `cons` empty)))) == 20
+  assert $ fst (fromJust (uncons (snd (fromJust (uncons (20 `cons` (10 `cons` empty))))))) == 10
+
   log "snoc should add an item to the end of the queue"
   assert $ fst (fromJust (uncons ((empty `snoc` 10) `snoc` 20))) == 10
   assert $ fst (fromJust (uncons (snd (fromJust (uncons ((empty `snoc` 10) `snoc` 20)))))) == 20
@@ -41,6 +45,15 @@ testCatQueue = unsafePartial do
   assert $ fst (fromJust (uncons queue1)) == 10
   assert $ fst (fromJust (uncons (snd (fromJust (uncons queue1))))) == 20
   assert $ fst (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons queue1)))))))) == 30
+
+  log "unsnoc of the empty queue should be Nothing"
+  assert $ isNothing (unsnoc empty)
+
+  log "unsnoc of a queue with left and right queues should remove items properly"
+  let queue1 = ((empty `snoc` 10) `snoc` 20) `snoc` 30
+  assert $ fst (fromJust (unsnoc queue1)) == 30
+  assert $ fst (fromJust (unsnoc (snd (fromJust (unsnoc queue1))))) == 20
+  assert $ fst (fromJust (unsnoc (snd (fromJust (unsnoc (snd (fromJust (unsnoc queue1)))))))) == 10
 
   log "fromFoldable should convert an array into a CatList with the same values"
   let queue3 = fromFoldable ["a", "b", "c"]

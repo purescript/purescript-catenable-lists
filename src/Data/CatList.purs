@@ -19,26 +19,19 @@ module Data.CatList
   , fromFoldable
   ) where
 
+import Prelude hiding (append)
+
 import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
-import Control.Applicative (pure, class Applicative)
-import Control.Apply ((<*>), class Apply)
-import Control.Bind (class Bind)
-import Control.Monad (ap, class Monad)
 import Control.MonadPlus (class MonadPlus)
 import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
 import Data.CatQueue as Q
 import Data.Foldable (class Foldable, foldMapDefaultL)
 import Data.Foldable as Foldable
-import Data.Function (flip)
-import Data.Functor ((<$>), class Functor)
 import Data.List as L
 import Data.Maybe (Maybe(..))
 import Data.Monoid (mempty, class Monoid)
-import Data.NaturalTransformation (type (~>))
-import Data.Semigroup (class Semigroup, (<>))
-import Data.Show (class Show, show)
 import Data.Traversable (sequence, traverse, class Traversable)
 import Data.Tuple (Tuple(..))
 import Data.Unfoldable (class Unfoldable)
@@ -140,18 +133,13 @@ foldr k b q = go q L.Nil
 fromFoldable :: forall f. Foldable f => f ~> CatList
 fromFoldable f = Foldable.foldMap singleton f
 
-map :: forall a b. (a -> b) -> CatList a -> CatList b
-map _ CatNil = CatNil
-map f (CatCons a q) =
-  let d = if Q.null q then CatNil else (foldr link CatNil q)
-  in f a `cons` map f d
-
 foldMap :: forall a m. Monoid m => (a -> m) -> CatList a -> m
 foldMap f CatNil = mempty
 foldMap f (CatCons a q) =
   let d = if Q.null q then CatNil else (foldr link CatNil q)
   in f a <> foldMap f d
 
+-- | Running time: `O(1)`
 instance semigroupCatList :: Semigroup (CatList a) where
   append = append
 
@@ -189,7 +177,10 @@ instance traversableCatList :: Traversable CatList where
     in cons <$> a <*> sequence d
 
 instance functorCatList :: Functor CatList where
-  map = map
+  map _ CatNil = CatNil
+  map f (CatCons a q) =
+    let d = if Q.null q then CatNil else (foldr link CatNil q)
+    in f a `cons` map f d
 
 instance applyCatList :: Apply CatList where
   apply = ap

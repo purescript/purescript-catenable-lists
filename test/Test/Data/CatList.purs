@@ -29,6 +29,11 @@ testCatList = unsafePartial do
   assert $ (fst <$> uncons (singleton 1)) == Just 1
   assert $ (null <<< snd <$> uncons (singleton 1)) == Just true
 
+  log "length should return the length of the list"
+  assert $ length empty == 0
+  assert $ length (snoc empty 1) == 1
+  assert $ length (snoc (snoc empty 1) 2) == 2
+
   log "cons should add an item to the beginning of the list"
   assert $ fst (fromJust (uncons (20 `cons` (10 `cons` empty)))) == 20
   assert $ fst (fromJust (uncons (snd (fromJust (uncons (20 `cons` (10 `cons` empty))))))) == 10

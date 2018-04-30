@@ -19,6 +19,11 @@ testCatQueue = unsafePartial do
   assert $ (fst <$> uncons (singleton 1)) == Just 1
   assert $ (null <<< snd <$> uncons (singleton 1)) == Just true
 
+  log "length should return the length of the queue"
+  assert $ length empty == 0
+  assert $ length (snoc empty 1) == 1
+  assert $ length (snoc (snoc empty 1) 2) == 2
+
   log "snoc should add an item to the end of the queue"
   assert $ fst (fromJust (uncons ((empty `snoc` 10) `snoc` 20))) == 10
   assert $ fst (fromJust (uncons (snd (fromJust (uncons ((empty `snoc` 10) `snoc` 20)))))) == 20

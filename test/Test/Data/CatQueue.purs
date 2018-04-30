@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-import Data.CatQueue (CatQueue, empty, fromFoldable, null, singleton, snoc, uncons)
+import Data.CatQueue (CatQueue, empty, fromFoldable, null, length, singleton, snoc, uncons)
 import Data.Foldable (foldMap, foldl)
 import Data.Maybe (Maybe(..), fromJust, isNothing)
 import Data.Monoid.Additive (Additive(..))
@@ -60,7 +60,7 @@ testCatQueue = unsafePartial do
   let longList :: CatQueue Int
       longList = range 0 10000
   assert $ ala Additive foldMap longList == 50005000
- 
+
   log "foldl is stack-safe"
   assert $ foldl (+) 0 longList == 50005000
 
@@ -74,4 +74,3 @@ testCatQueue = unsafePartial do
   log "replicate should produce a CatList with a value repeated"
   let queue5 = (replicate 3 "foo") :: CatQueue String
   assert $ foldMap (\v -> [v]) queue5 == ["foo", "foo", "foo"]
-

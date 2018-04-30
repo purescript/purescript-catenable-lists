@@ -2,22 +2,15 @@ module Test.Data.CatList (testCatList) where
 
 import Data.CatList
 
-import Control.Bind (discard)
-import Control.Category (id)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log, logShow)
-import Data.CommutativeRing ((+))
-import Data.Eq ((==))
 import Data.Foldable (foldMap, foldl)
-import Data.Function (($))
-import Data.Functor ((<$>))
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Monoid.Additive (Additive(..))
 import Data.Tuple (fst, snd)
 import Data.Unfoldable (range, replicate)
-import Data.Unit (Unit)
 import Partial.Unsafe (unsafePartial)
-import Prelude ((<<<))
+import Prelude (Unit, discard, id, ($), (+), (<$>), (<<<), (==))
 import Test.Assert (ASSERT, assert)
 
 testCatList :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit

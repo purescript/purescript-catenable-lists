@@ -12,13 +12,12 @@ module Data.CatQueue
   , null
   , singleton
   , length
-  , append
   , snoc
   , uncons
   , fromFoldable
   ) where
 
-import Prelude hiding (append)
+import Prelude
 
 import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
@@ -50,13 +49,6 @@ empty = CatQueue Nil Nil
 null :: forall a. CatQueue a -> Boolean
 null (CatQueue Nil Nil) = true
 null _ = false
-
--- | Append all elements of a queue to the end of another
--- | queue, creating a new queue.
--- |
--- | Running time: `O(n) in the length of the second queue`
-append :: forall a. CatQueue a -> CatQueue a -> CatQueue a
-append cq = foldl snoc cq
 
 -- | Create a queue containing a single element.
 -- |
@@ -121,8 +113,9 @@ instance eqCatQueue :: Eq a => Eq (CatQueue a) where
 instance ordCatQueue :: Ord a => Ord (CatQueue a) where
   compare = cqCompare
 
+-- | Running time: `O(n) in the length of the second queue`
 instance semigroupCatQueue :: Semigroup (CatQueue a) where
-  append = append
+  append = foldl snoc
 
 instance monoidCatQueue :: Monoid (CatQueue a) where
   mempty = empty

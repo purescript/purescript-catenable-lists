@@ -18,9 +18,6 @@ module Data.CatList
   , fromFoldable
   ) where
 
-import Data.CatQueue as Q
-import Data.Foldable as Foldable
-import Data.List as L
 import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
 import Control.Applicative (pure, class Applicative)
@@ -30,9 +27,12 @@ import Control.Monad (ap, class Monad)
 import Control.MonadPlus (class MonadPlus)
 import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
+import Data.CatQueue as Q
 import Data.Foldable (class Foldable)
+import Data.Foldable as Foldable
 import Data.Function (flip)
 import Data.Functor ((<$>), class Functor)
+import Data.List as L
 import Data.Maybe (Maybe(..))
 import Data.Monoid (mempty, class Monoid)
 import Data.NaturalTransformation (type (~>))
@@ -41,6 +41,7 @@ import Data.Show (class Show, show)
 import Data.Traversable (sequence, traverse, class Traversable)
 import Data.Tuple (Tuple(..))
 import Data.Unfoldable (class Unfoldable)
+import Data.Unfoldable1 (class Unfoldable1)
 
 -- | A strict catenable list.
 -- |
@@ -166,6 +167,13 @@ instance unfoldableCatList :: Unfoldable CatList where
       go source memo = case f source of
         Nothing -> memo
         Just (Tuple one rest) -> go rest (snoc memo one)
+
+instance unfoldable1CatList :: Unfoldable1 CatList where
+  unfoldr1 f b = go b CatNil
+    where
+      go source memo = case f source of
+        Tuple one Nothing -> snoc memo one
+        Tuple one (Just rest) -> go rest (snoc memo one)
 
 instance traversableCatList :: Traversable CatList where
   traverse _ CatNil = pure CatNil

@@ -3,23 +3,22 @@ module Test.Data.CatList (testCatList) where
 import Data.CatList
 
 import Control.Bind (discard)
-import Control.Category (id)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.CommutativeRing ((+))
 import Data.Eq ((==))
 import Data.Foldable (foldMap)
-import Data.Function (($))
+import Data.Function (identity, ($))
 import Data.Functor ((<$>))
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Tuple (fst, snd)
 import Data.Unfoldable (replicate)
 import Data.Unit (Unit)
+import Effect (Effect)
+import Effect.Console (log)
 import Partial.Unsafe (unsafePartial)
 import Prelude ((<<<))
-import Test.Assert (ASSERT, assert)
+import Test.Assert (assert)
 
-testCatList :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
+testCatList :: Effect Unit
 testCatList = unsafePartial do
   log "null should be true for the empty list"
   assert $ null empty
@@ -48,7 +47,7 @@ testCatList = unsafePartial do
 
   log "foldMap over a list of monoids should produce the concatenation of the monoids"
   let list2 = (("a" `cons` empty) `snoc` "b") `snoc` "c"
-  assert $ foldMap id list2 == "abc"
+  assert $ foldMap identity list2 == "abc"
 
   log "fromFoldable should convert an array into a CatList with the same values"
   let list3 = fromFoldable ["a", "b", "c"]

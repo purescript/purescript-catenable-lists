@@ -2,20 +2,15 @@ module Test.Data.CatList (testCatList) where
 
 import Data.CatList
 
-import Control.Bind (discard)
-import Data.CommutativeRing ((+))
-import Data.Eq ((==))
-import Data.Foldable (foldMap)
-import Data.Function (identity, ($))
-import Data.Functor ((<$>))
+import Data.Foldable (foldMap, foldl)
 import Data.Maybe (Maybe(..), fromJust)
+import Data.Monoid.Additive (Additive(..))
 import Data.Tuple (fst, snd)
-import Data.Unfoldable (replicate)
-import Data.Unit (Unit)
+import Data.Unfoldable (range, replicate)
 import Effect (Effect)
-import Effect.Console (log)
+import Effect.Console (log, logShow)
 import Partial.Unsafe (unsafePartial)
-import Prelude ((<<<))
+import Prelude (Unit, discard, identity, ($), (+), (<$>), (<<<), (==))
 import Test.Assert (assert)
 
 testCatList :: Effect Unit
@@ -26,6 +21,11 @@ testCatList = unsafePartial do
   log "singleton should create a queue with one element"
   assert $ (fst <$> uncons (singleton 1)) == Just 1
   assert $ (null <<< snd <$> uncons (singleton 1)) == Just true
+
+  log "length should return the length of the list"
+  assert $ length empty == 0
+  assert $ length (snoc empty 1) == 1
+  assert $ length (snoc (snoc empty 1) 2) == 2
 
   log "cons should add an item to the beginning of the list"
   assert $ fst (fromJust (uncons (20 `cons` (10 `cons` empty)))) == 20
@@ -48,6 +48,14 @@ testCatList = unsafePartial do
   log "foldMap over a list of monoids should produce the concatenation of the monoids"
   let list2 = (("a" `cons` empty) `snoc` "b") `snoc` "c"
   assert $ foldMap identity list2 == "abc"
+
+  log "foldMap is stack safe"
+  let longList :: CatList Int
+      longList = range 0 10000
+  logShow $ foldMap Additive longList
+
+  log "foldl is stack-safe"
+  logShow $ foldl (+) 0 longList
 
   log "fromFoldable should convert an array into a CatList with the same values"
   let list3 = fromFoldable ["a", "b", "c"]

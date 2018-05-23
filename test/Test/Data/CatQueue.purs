@@ -2,20 +2,19 @@ module Test.Data.CatQueue (testCatQueue) where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
-import Data.CatQueue (CatQueue, empty, fromFoldable, null, length, singleton, cons, snoc, uncons, unsnoc)
-import Data.Foldable (foldMap, foldl)
+import Data.CatQueue (CatQueue, cons, empty, fromFoldable, length, null, singleton, snoc, uncons, unsnoc)
 import Data.Maybe (Maybe(..), fromJust, isNothing)
 import Data.Monoid.Additive (Additive(..))
 import Data.Newtype (ala)
-import Data.Traversable (traverse)
+import Data.Traversable (foldMap, foldl, traverse)
 import Data.Tuple (fst, snd)
 import Data.Unfoldable (range, replicate)
+import Effect (Effect)
+import Effect.Console (log)
 import Partial.Unsafe (unsafePartial)
-import Test.Assert (ASSERT, assert)
+import Test.Assert (assert)
 
-testCatQueue :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
+testCatQueue :: Effect Unit
 testCatQueue = unsafePartial do
   log "null should be true for the empty queue"
   assert $ null empty
@@ -50,7 +49,6 @@ testCatQueue = unsafePartial do
   assert $ isNothing (unsnoc empty)
 
   log "unsnoc of a queue with left and right queues should remove items properly"
-  let queue1 = ((empty `snoc` 10) `snoc` 20) `snoc` 30
   assert $ fst (fromJust (unsnoc queue1)) == 30
   assert $ fst (fromJust (unsnoc (snd (fromJust (unsnoc queue1))))) == 20
   assert $ fst (fromJust (unsnoc (snd (fromJust (unsnoc (snd (fromJust (unsnoc queue1)))))))) == 10
@@ -67,7 +65,7 @@ testCatQueue = unsafePartial do
 
   log "foldMap over a queue of monoids should produce the concatenation of the monoids"
   let queue2 = ((empty `snoc` "a") `snoc` "b") `snoc` "c"
-  assert $ foldMap id queue2 == "abc"
+  assert $ foldMap identity queue2 == "abc"
 
   log "foldMap is stack safe"
   let longList :: CatQueue Int

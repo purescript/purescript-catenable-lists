@@ -31,10 +31,10 @@ import Data.Foldable (class Foldable, foldMapDefaultL)
 import Data.Foldable as Foldable
 import Data.List as L
 import Data.Maybe (Maybe(..))
-import Data.Monoid (mempty, class Monoid)
 import Data.Traversable (sequence, traverse, class Traversable)
 import Data.Tuple (Tuple(..))
 import Data.Unfoldable (class Unfoldable)
+import Data.Unfoldable1 (class Unfoldable1)
 
 -- | A strict catenable list.
 -- |
@@ -165,6 +165,13 @@ instance unfoldableCatList :: Unfoldable CatList where
       go source memo = case f source of
         Nothing -> memo
         Just (Tuple one rest) -> go rest (snoc memo one)
+
+instance unfoldable1CatList :: Unfoldable1 CatList where
+  unfoldr1 f b = go b CatNil
+    where
+      go source memo = case f source of
+        Tuple one Nothing -> snoc memo one
+        Tuple one (Just rest) -> go rest (snoc memo one)
 
 instance traversableCatList :: Traversable CatList where
   traverse _ CatNil = pure CatNil

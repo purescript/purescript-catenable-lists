@@ -2,18 +2,18 @@ module Test.Data.CatList (testCatList) where
 
 import Data.CatList
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Data.Foldable (foldMap, foldl)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Monoid.Additive (Additive(..))
 import Data.Tuple (fst, snd)
 import Data.Unfoldable (range, replicate)
+import Effect (Effect)
+import Effect.Console (log, logShow)
 import Partial.Unsafe (unsafePartial)
-import Prelude (Unit, discard, id, ($), (+), (<$>), (<<<), (==))
-import Test.Assert (ASSERT, assert)
+import Prelude (Unit, discard, identity, ($), (+), (<$>), (<<<), (==))
+import Test.Assert (assert)
 
-testCatList :: forall eff. Eff (console :: CONSOLE, assert :: ASSERT | eff) Unit
+testCatList :: Effect Unit
 testCatList = unsafePartial do
   log "null should be true for the empty list"
   assert $ null empty
@@ -47,7 +47,7 @@ testCatList = unsafePartial do
 
   log "foldMap over a list of monoids should produce the concatenation of the monoids"
   let list2 = (("a" `cons` empty) `snoc` "b") `snoc` "c"
-  assert $ foldMap id list2 == "abc"
+  assert $ foldMap identity list2 == "abc"
 
   log "foldMap is stack safe"
   let longList :: CatList Int

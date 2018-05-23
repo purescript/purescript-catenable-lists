@@ -31,10 +31,9 @@ import Data.Foldable (class Foldable, foldMap, foldMapDefaultL, foldl, foldrDefa
 import Data.List (List(..), reverse)
 import Data.List as L
 import Data.Maybe (Maybe(..))
-import Data.Monoid (class Monoid)
 import Data.Traversable (class Traversable, sequenceDefault)
 import Data.Tuple (Tuple(..))
-import Data.Unfoldable (class Unfoldable)
+import Data.Unfoldable (class Unfoldable, class Unfoldable1)
 
 -- | A strict double-ended queue (dequeue) representated using a pair of lists.
 data CatQueue a = CatQueue (List a) (List a)
@@ -149,6 +148,13 @@ instance foldableCatQueue :: Foldable CatQueue where
     go acc q = case uncons q of
        Just (Tuple x xs) -> go (f acc x) xs
        Nothing -> acc
+
+instance unfoldable1CatQueue :: Unfoldable1 CatQueue where
+  unfoldr1 f b = go b empty
+    where
+      go source memo = case f source of
+        Tuple one Nothing -> snoc memo one
+        Tuple one (Just rest) -> go rest (snoc memo one)
 
 instance unfoldableCatQueue :: Unfoldable CatQueue where
   unfoldr f b = go b empty

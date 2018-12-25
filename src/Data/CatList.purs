@@ -110,6 +110,7 @@ uncons (CatCons a q) = Just (Tuple a (if Q.null q then CatNil else (foldr link C
 -- | Running time: `O(1)`
 link :: forall a. CatList a -> CatList a -> CatList a
 link CatNil cat = cat
+link cat CatNil = cat
 link (CatCons a q) cat = CatCons a (Q.snoc q cat)
 
 -- | Tail recursive version of foldr on `CatList`.

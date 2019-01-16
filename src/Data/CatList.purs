@@ -69,9 +69,7 @@ length = Foldable.length
 -- |
 -- | Running time: `O(1)`
 append :: forall a. CatList a -> CatList a -> CatList a
-append as CatNil = as
-append CatNil as = as
-append as bs = link as bs
+append = link
 
 -- | Append an element to the beginning of the catenable list, creating a new
 -- | catenable list.

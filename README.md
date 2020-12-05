@@ -1,7 +1,7 @@
 # purescript-catenable-lists
 
 [![Latest release](http://img.shields.io/github/release/purescript/purescript-catenable-lists.svg)](https://github.com/purescript/purescript-catenable-lists/releases)
-[![Build status](https://travis-ci.org/purescript/purescript-catenable-lists.svg?branch=master)](https://travis-ci.org/purescript/purescript-catenable-lists)
+[![Build status](https://github.com/purescript/purescript-catenable-lists/workflows/CI/badge.svg?branch=master)](https://github.com/purescript/purescript-catenable-lists/actions?query=workflow%3ACI+branch%3Amaster)
 
 Strict catenable list implementation for PureScript.
 
@@ -15,7 +15,7 @@ See the following references for further information.
 ## Installation
 
 ```bash
-bower install --save purescript-catenable-lists
+spago install catenable-lists
 ```
 
 ## Documentation

@@ -133,7 +133,7 @@ fromFoldable :: forall f. Foldable f => f ~> CatList
 fromFoldable f = Foldable.foldMap singleton f
 
 foldMap :: forall a m. Monoid m => (a -> m) -> CatList a -> m
-foldMap f CatNil = mempty
+foldMap _ CatNil = mempty
 foldMap f (CatCons a q) =
   let d = if Q.null q then CatNil else (foldr link CatNil q)
   in f a <> foldMap f d

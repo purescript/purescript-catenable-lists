@@ -11,16 +11,16 @@ New features:
 Bugfixes:
 
 Other improvements:
-- Fix warnings revealed by `v0.14.1` PS release (#47)
+
+## [v6.0.1](https://github.com/purescript/purescript-catenable-lists/releases/tag/v6.0.1) - 2021-04-19
+
+Other improvements:
+- Fix warnings revealed by `v0.14.1` PureScript release (#47 by @JordanMartinez)
 
 ## [v6.0.0](https://github.com/purescript/purescript-catenable-lists/releases/tag/v6.0.0) - 2021-02-26
 
 Breaking changes:
   - Added support for PureScript 0.14 and dropped support for all previous versions (#41)
-
-New features:
-
-Bugfixes:
 
 Other improvements:
   - Migrated CI to GitHub Actions and updated installation instructions to use Spago (#42)

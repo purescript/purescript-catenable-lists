@@ -24,7 +24,6 @@ import Prelude hiding (append)
 import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
 import Control.MonadPlus (class MonadPlus)
-import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
 import Data.CatQueue as Q
 import Data.Foldable (class Foldable, foldMapDefaultL)
@@ -206,7 +205,5 @@ instance plusCatList :: Plus CatList where
   empty = empty
 
 instance alternativeCatList :: Alternative CatList
-
-instance monadZeroCatList :: MonadZero CatList
 
 instance monadPlusCatList :: MonadPlus CatList

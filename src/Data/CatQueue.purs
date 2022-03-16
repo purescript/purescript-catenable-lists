@@ -25,7 +25,6 @@ import Control.Alt (class Alt)
 import Control.Alternative (class Alternative)
 import Control.Apply (lift2)
 import Control.MonadPlus (class MonadPlus)
-import Control.MonadZero (class MonadZero)
 import Control.Plus (class Plus)
 import Data.Foldable (class Foldable, foldMap, foldMapDefaultL, foldl, foldrDefault)
 import Data.List (List(..), reverse)
@@ -190,7 +189,5 @@ instance plusCatQueue :: Plus CatQueue where
   empty = empty
 
 instance alternativeCatQueue :: Alternative CatQueue
-
-instance monadZeroCatQueue :: MonadZero CatQueue
 
 instance monadPlusCatQueue :: MonadPlus CatQueue

@@ -103,25 +103,25 @@ fromFoldable f = foldMap singleton f
 cqEq :: forall a. Eq a => CatQueue a -> CatQueue a -> Boolean
 cqEq = go
   where
-    elemEq = eq :: (a -> a -> Boolean)
-    go xs ys = case uncons xs, uncons ys of
-      Just (Tuple x xs'), Just (Tuple y ys')
-        | x `elemEq` y -> go xs' ys'
-      Nothing, Nothing -> true
-      _      , _       -> false
+  elemEq = eq :: (a -> a -> Boolean)
+  go xs ys = case uncons xs, uncons ys of
+    Just (Tuple x xs'), Just (Tuple y ys')
+      | x `elemEq` y -> go xs' ys'
+    Nothing, Nothing -> true
+    _, _ -> false
 
 cqCompare :: forall a. Ord a => CatQueue a -> CatQueue a -> Ordering
 cqCompare = go
   where
-    elemCompare = compare :: (a -> a -> Ordering)
-    go xs ys = case uncons xs, uncons ys of
-      Just (Tuple x xs'), Just (Tuple y ys') ->
-        case elemCompare x y of
-             EQ       -> go xs' ys'
-             ordering -> ordering
-      Just _,   Nothing -> GT
-      Nothing,  Just _  -> LT
-      Nothing,  Nothing -> EQ
+  elemCompare = compare :: (a -> a -> Ordering)
+  go xs ys = case uncons xs, uncons ys of
+    Just (Tuple x xs'), Just (Tuple y ys') ->
+      case elemCompare x y of
+        EQ -> go xs' ys'
+        ordering -> ordering
+    Just _, Nothing -> GT
+    Nothing, Just _ -> LT
+    Nothing, Nothing -> EQ
 
 instance eqCatQueue :: Eq a => Eq (CatQueue a) where
   eq = cqEq
@@ -145,27 +145,27 @@ instance foldableCatQueue :: Foldable CatQueue where
   foldl f = go
     where
     go acc q = case uncons q of
-       Just (Tuple x xs) -> go (f acc x) xs
-       Nothing -> acc
+      Just (Tuple x xs) -> go (f acc x) xs
+      Nothing -> acc
 
 instance unfoldable1CatQueue :: Unfoldable1 CatQueue where
   unfoldr1 f b = go b empty
     where
-      go source memo = case f source of
-        Tuple one Nothing -> snoc memo one
-        Tuple one (Just rest) -> go rest (snoc memo one)
+    go source memo = case f source of
+      Tuple one Nothing -> snoc memo one
+      Tuple one (Just rest) -> go rest (snoc memo one)
 
 instance unfoldableCatQueue :: Unfoldable CatQueue where
   unfoldr f b = go b empty
     where
-      go source memo = case f source of
-        Nothing -> memo
-        Just (Tuple one rest) -> go rest (snoc memo one)
+    go source memo = case f source of
+      Nothing -> memo
+      Just (Tuple one rest) -> go rest (snoc memo one)
 
 instance traversableCatQueue :: Traversable CatQueue where
   traverse f =
     map (foldl snoc empty)
-    <<< foldl (\acc -> lift2 snoc acc <<< f) (pure empty)
+      <<< foldl (\acc -> lift2 snoc acc <<< f) (pure empty)
   sequence = sequenceDefault
 
 instance functorCatQueue :: Functor CatQueue where

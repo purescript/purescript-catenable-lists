@@ -30,7 +30,7 @@ import Data.Foldable (class Foldable, foldMapDefaultL)
 import Data.Foldable as Foldable
 import Data.List as L
 import Data.Maybe (Maybe(..))
-import Data.Traversable (sequence, traverse, class Traversable)
+import Data.Traversable (class Traversable, sequence, traverse)
 import Data.Tuple (Tuple(..))
 import Data.Unfoldable (class Unfoldable)
 import Data.Unfoldable1 (class Unfoldable1)
@@ -118,8 +118,8 @@ foldr k b q = go q L.Nil
   where
   go :: Q.CatQueue (CatList a) -> L.List (CatList a -> CatList a) -> CatList a
   go xs ys = case Q.uncons xs of
-                  Nothing -> foldl (\x i -> i x) b ys
-                  Just (Tuple a rest) -> go rest (L.Cons (k a) ys)
+    Nothing -> foldl (\x i -> i x) b ys
+    Just (Tuple a rest) -> go rest (L.Cons (k a) ys)
 
   foldl :: forall b c. (c -> b -> c) -> c -> L.List b -> c
   foldl _ c L.Nil = c
@@ -134,8 +134,10 @@ fromFoldable f = Foldable.foldMap singleton f
 foldMap :: forall a m. Monoid m => (a -> m) -> CatList a -> m
 foldMap _ CatNil = mempty
 foldMap f (CatCons a q) =
-  let d = if Q.null q then CatNil else (foldr link CatNil q)
-  in f a <> foldMap f d
+  let
+    d = if Q.null q then CatNil else (foldr link CatNil q)
+  in
+    f a <> foldMap f d
 
 -- | Running time: `O(1)`
 instance semigroupCatList :: Semigroup (CatList a) where
@@ -154,38 +156,44 @@ instance foldableCatList :: Foldable CatList where
   foldl f = go
     where
     go acc q = case uncons q of
-       Just (Tuple x xs) -> go (f acc x) xs
-       Nothing -> acc
+      Just (Tuple x xs) -> go (f acc x) xs
+      Nothing -> acc
 
 instance unfoldableCatList :: Unfoldable CatList where
   unfoldr f b = go b CatNil
     where
-      go source memo = case f source of
-        Nothing -> memo
-        Just (Tuple one rest) -> go rest (snoc memo one)
+    go source memo = case f source of
+      Nothing -> memo
+      Just (Tuple one rest) -> go rest (snoc memo one)
 
 instance unfoldable1CatList :: Unfoldable1 CatList where
   unfoldr1 f b = go b CatNil
     where
-      go source memo = case f source of
-        Tuple one Nothing -> snoc memo one
-        Tuple one (Just rest) -> go rest (snoc memo one)
+    go source memo = case f source of
+      Tuple one Nothing -> snoc memo one
+      Tuple one (Just rest) -> go rest (snoc memo one)
 
 instance traversableCatList :: Traversable CatList where
   traverse _ CatNil = pure CatNil
   traverse f (CatCons a q) =
-    let d = if Q.null q then CatNil else (foldr link CatNil q)
-    in cons <$> f a <*> traverse f d
+    let
+      d = if Q.null q then CatNil else (foldr link CatNil q)
+    in
+      cons <$> f a <*> traverse f d
   sequence CatNil = pure CatNil
   sequence (CatCons a q) =
-    let d = if Q.null q then CatNil else (foldr link CatNil q)
-    in cons <$> a <*> sequence d
+    let
+      d = if Q.null q then CatNil else (foldr link CatNil q)
+    in
+      cons <$> a <*> sequence d
 
 instance functorCatList :: Functor CatList where
   map _ CatNil = CatNil
   map f (CatCons a q) =
-    let d = if Q.null q then CatNil else (foldr link CatNil q)
-    in f a `cons` map f d
+    let
+      d = if Q.null q then CatNil else (foldr link CatNil q)
+    in
+      f a `cons` map f d
 
 instance applyCatList :: Apply CatList where
   apply = ap

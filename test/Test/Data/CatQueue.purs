@@ -54,7 +54,7 @@ testCatQueue = unsafePartial do
   assert $ fst (fromJust (unsnoc (snd (fromJust (unsnoc (snd (fromJust (unsnoc queue1)))))))) == 10
 
   log "fromFoldable should convert an array into a CatList with the same values"
-  let queue3 = fromFoldable ["a", "b", "c"]
+  let queue3 = fromFoldable [ "a", "b", "c" ]
   assert $ fst (fromJust (uncons queue3)) == "a"
   assert $ fst (fromJust (uncons (snd (fromJust (uncons queue3))))) == "b"
   assert $ fst (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons queue3)))))))) == "c"
@@ -68,8 +68,9 @@ testCatQueue = unsafePartial do
   assert $ foldMap identity queue2 == "abc"
 
   log "foldMap is stack safe"
-  let longList :: CatQueue Int
-      longList = range 0 10000
+  let
+    longList :: CatQueue Int
+    longList = range 0 10000
   assert $ ala Additive foldMap longList == 50005000
 
   log "foldl is stack-safe"
@@ -79,9 +80,9 @@ testCatQueue = unsafePartial do
   assert $ traverse Just longList == Just longList
 
   log "functor should correctly map a function over the contents of a CatList"
-  let queue4 = (_ + 3) <$> fromFoldable [1, 2, 3]
-  assert $ foldMap (\v -> [v]) queue4 == [4, 5, 6]
+  let queue4 = (_ + 3) <$> fromFoldable [ 1, 2, 3 ]
+  assert $ foldMap (\v -> [ v ]) queue4 == [ 4, 5, 6 ]
 
   log "replicate should produce a CatList with a value repeated"
   let queue5 = (replicate 3 "foo") :: CatQueue String
-  assert $ foldMap (\v -> [v]) queue5 == ["foo", "foo", "foo"]
+  assert $ foldMap (\v -> [ v ]) queue5 == [ "foo", "foo", "foo" ]

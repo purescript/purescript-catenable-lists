@@ -11,6 +11,7 @@ Other improvements:
 ## [v7.0.0](https://github.com/purescript/purescript-catenable-lists/releases/tag/v7.0.0) - 2022-04-27
 
 Breaking changes:
+
 - Update project and deps to PureScript v0.15.0 (#48 by @JordanMartinez)
 - Drop deprecated `MonadZero` instance (#49 by @JordanMartinez)
 
@@ -23,16 +24,19 @@ Other improvements:
 ## [v6.0.1](https://github.com/purescript/purescript-catenable-lists/releases/tag/v6.0.1) - 2021-04-19
 
 Other improvements:
+
 - Fix warnings revealed by `v0.14.1` PureScript release (#47 by @JordanMartinez)
 
 ## [v6.0.0](https://github.com/purescript/purescript-catenable-lists/releases/tag/v6.0.0) - 2021-02-26
 
 Breaking changes:
-  - Added support for PureScript 0.14 and dropped support for all previous versions (#41)
+
+- Added support for PureScript 0.14 and dropped support for all previous versions (#41)
 
 Other improvements:
-  - Migrated CI to GitHub Actions and updated installation instructions to use Spago (#42)
-  - Added a CHANGELOG.md file and pull request template (#44, #45)
+
+- Migrated CI to GitHub Actions and updated installation instructions to use Spago (#42)
+- Added a CHANGELOG.md file and pull request template (#44, #45)
 
 ## [v5.0.1](https://github.com/purescript/purescript-catenable-lists/releases/tag/v5.0.1) - 2019-01-25
 
@@ -87,5 +91,6 @@ This release is intended for the PureScript 0.9.1 compiler and newer.
 ## [0.1.0](https://github.com/purescript/purescript-catenable-lists/releases/tag/0.1.0) - 2015-08-09
 
 **Features**
+
 - `CatList`
 - `CatQueue`

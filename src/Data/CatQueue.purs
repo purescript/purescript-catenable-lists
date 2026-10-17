@@ -80,9 +80,10 @@ snoc (CatQueue l r) a = CatQueue l (Cons a r)
 -- |
 -- | Note that any single operation may run in `O(n)`.
 uncons :: forall a. CatQueue a -> Maybe (Tuple a (CatQueue a))
-uncons (CatQueue Nil Nil) = Nothing
-uncons (CatQueue Nil r) = uncons (CatQueue (reverse r) Nil)
-uncons (CatQueue (Cons a as) r) = Just (Tuple a (CatQueue as r))
+uncons = case _ of
+  CatQueue Nil Nil -> Nothing
+  CatQueue Nil r -> uncons (CatQueue (reverse r) Nil)
+  CatQueue (Cons a as) r -> Just (Tuple a (CatQueue as r))
 
 -- | Decompose a queue into a `Tuple` of the last element and the rest of the queue.
 -- |

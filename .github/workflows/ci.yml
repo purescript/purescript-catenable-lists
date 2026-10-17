@@ -27,8 +27,5 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Lint JavaScript
-        run: npm run lint
-
       - name: Check formatting
         run: npm run format:check

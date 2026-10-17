@@ -23,19 +23,3 @@ spago install catenable-lists
 ## Documentation
 
 Module documentation is [published on Pursuit](http://pursuit.purescript.org/packages/purescript-catenable-lists).
-
-## Benchmarks
-
-![cons](benchmarks/cons.png)
-
-![snoc](benchmarks/snoc.png)
-
-![uncons](benchmarks/uncons.png)
-
-![append](benchmarks/append.png)
-
-![snoc-uncons](benchmarks/snoc-uncons.png)
-
-![cons-uncons-n](benchmarks/cons-uncons-n.png)
-
-![snoc-uncons-n](benchmarks/snoc-uncons-n.png)

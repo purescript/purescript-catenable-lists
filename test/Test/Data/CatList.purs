@@ -50,24 +50,25 @@ testCatList = unsafePartial do
   assert $ foldMap identity list2 == "abc"
 
   log "foldMap is stack safe"
-  let longList :: CatList Int
-      longList = range 0 10000
+  let
+    longList :: CatList Int
+    longList = range 0 10000
   logShow $ foldMap Additive longList
 
   log "foldl is stack-safe"
   logShow $ foldl (+) 0 longList
 
   log "fromFoldable should convert an array into a CatList with the same values"
-  let list3 = fromFoldable ["a", "b", "c"]
+  let list3 = fromFoldable [ "a", "b", "c" ]
   assert $ fst (fromJust (uncons list3)) == "a"
   assert $ fst (fromJust (uncons (snd (fromJust (uncons list3))))) == "b"
   assert $ fst (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons list3)))))))) == "c"
   assert $ null (snd (fromJust (uncons (snd (fromJust (uncons (snd (fromJust (uncons list3)))))))))
 
   log "functor should correctly map a function over the contents of a CatList"
-  let list4 = (_ + 3) <$> fromFoldable [1, 2, 3]
-  assert $ foldMap (\v -> [v]) list4 == [4, 5, 6]
+  let list4 = (_ + 3) <$> fromFoldable [ 1, 2, 3 ]
+  assert $ foldMap (\v -> [ v ]) list4 == [ 4, 5, 6 ]
 
   log "replicate should produce a CatList with a value repeated"
   let list5 = (replicate 3 "foo") :: CatList String
-  assert $ foldMap (\v -> [v]) list5 == ["foo", "foo", "foo"]
+  assert $ foldMap (\v -> [ v ]) list5 == [ "foo", "foo", "foo" ]
